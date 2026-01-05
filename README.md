@@ -97,4 +97,4 @@ pnpm test
 **UnoCSS**：具有高性能且极具灵活性的即时原子化 CSS 引擎
 ## License
 
-[MIT](./LICENSE) License © 2022-PRESENT [pany](https://github.com/pany-ang)
+[MIT](./LICENSE) License © 2022-PRESENT
