@@ -13,6 +13,9 @@ export default antfu(
       quotes: "double",
       // 是否启用分号
       semi: false
+      // overrides: {
+      //   "antfu/top-level-function": "off"
+      // }
     },
     // 忽略文件
     ignores: []

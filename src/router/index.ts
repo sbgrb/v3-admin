@@ -12,19 +12,6 @@ const Layouts = () => import("@/layouts/index.vue")
  */
 export const constantRoutes: RouteRecordRaw[] = [
   {
-    path: "/redirect",
-    component: Layouts,
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: ":path(.*)",
-        component: () => import("@/pages/redirect/index.vue")
-      }
-    ]
-  },
-  {
     path: "/403",
     component: () => import("@/pages/error/403.vue"),
     meta: {
@@ -57,7 +44,54 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: "Dashboard",
         meta: {
           title: "首页",
-          svgIcon: "dashboard",
+          affix: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/user",
+    component: Layouts,
+    redirect: "/user/list",
+    children: [
+      {
+        path: "list",
+        component: () => import("@/pages/user/index.vue"),
+        name: "User",
+        meta: {
+          title: "用户管理",
+          affix: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/authCode",
+    component: Layouts,
+    redirect: "/authCode/list",
+    children: [
+      {
+        path: "list",
+        component: () => import("@/pages/authCode/index.vue"),
+        name: "authCodeList",
+        meta: {
+          title: "授权码管理",
+          affix: true
+        }
+      }
+    ]
+  },
+  {
+    path: "/basic",
+    component: Layouts,
+    redirect: "/basic",
+    children: [
+      {
+        path: "basic",
+        component: () => import("@/pages/basic/index.vue"),
+        name: "AuthCode",
+        meta: {
+          title: "数据维护",
           affix: true
         }
       }
