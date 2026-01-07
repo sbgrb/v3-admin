@@ -1,41 +1,33 @@
 <script setup lang="ts">
+import type { FontParams } from "@/pages/basic/api/type.ts"
 import { ElMessageBox } from "element-plus"
-import { getCurrentUserApi } from "@/pages/user/api"
+import { ref } from "vue"
+import AddFont from "./components/addFont.vue"
 
 const dataForm = reactive({
-  phone: ""
+  kanji: ""
 })
-const currentPage = ref(1)
-const pageSize = ref(10)
-const total = ref(0)
 
-interface UserInfo {
-  userName: string
-  id: number
+interface BasicType extends HTMLElement {
+  init: () => void
 }
+
+const detailModal = ref<BasicType | null>(null)
 
 const tableData = reactive([])
 
 function getMainList() {
-  getCurrentUserApi({ ...dataForm, pageSize: pageSize.value, pageNum: currentPage.value }).then((data) => {
-    if (data.code === 200) {
-      ElMessage.success(data.message)
-      tableData.concat(data.data as [])
-    } else {
-      ElMessage.error(data.message)
-    }
-  })
+
 }
 
 function searchReset() {
 
 }
-
-function handleEdit(row: UserInfo) {
-  console.log(row)
+function addForm(row: FontParams) {
+  detailModal.value!.init(row)
 }
 
-function handleDelete(row: UserInfo) {
+function handleDelete(row: FormData) {
   ElMessageBox.confirm(
     "是否删除",
     "Confirm"
@@ -53,8 +45,8 @@ onMounted(() => {
   <el-form :model="dataForm" label-width="100px">
     <el-row>
       <el-col :span="6">
-        <el-form-item label="手机号">
-          <el-input v-model="dataForm.phone" />
+        <el-form-item label="汉字">
+          <el-input v-model="dataForm.kanji" />
         </el-form-item>
       </el-col>
       <el-col :span="6">
@@ -69,14 +61,19 @@ onMounted(() => {
       </el-col>
     </el-row>
   </el-form>
+  <div class="btns">
+    <el-button type="primary" @click="addForm({})">
+      新增
+    </el-button>
+  </div>
   <el-table :data="tableData" style="width: 100%" border>
-    <el-table-column prop="date" label="Date" width="180" align="center" />
-    <el-table-column prop="name" label="Name" width="180" align="center" />
-    <el-table-column prop="address" label="Address" align="center" />
-    <el-table-column prop="address" label="Address" align="center" />
+    <el-table-column type="index"></el-table-column>
+    <el-table-column prop="假名" label="Date" width="180" align="center" />
+    <el-table-column prop="汉字" label="Name" width="180" align="center" />
+    <el-table-column prop="定义" label="Address" align="center" />
     <el-table-column prop="address" label="操作" align="center">
       <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.row)">
+        <el-button size="small" @click="addForm(scope.row)">
           编辑
         </el-button>
         <el-button size="small" type="danger" @click="handleDelete(scope.row)">
@@ -85,17 +82,11 @@ onMounted(() => {
       </template>
     </el-table-column>
   </el-table>
-  <el-pagination
-    v-model:current-page="currentPage"
-    v-model:page-size="pageSize"
-    :total="total"
-    :page-sizes="[10, 20, 30, 40]"
-    @size-change="getMainList"
-    @current-change="getMainList"
-    background layout="prev, pager, next"
-  />
+  <AddFont ref="detailModal" @refer-list="getMainList" />
 </template>
 
 <style scoped lang="scss">
-
+.btns {
+  margin: 8px 0;
+}
 </style>

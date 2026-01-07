@@ -84,14 +84,35 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/basic",
     component: Layouts,
-    redirect: "/basic",
+    redirect: "/basic/word",
+    meta: {
+      title: "数据维护"
+    },
     children: [
       {
-        path: "basic",
-        component: () => import("@/pages/basic/index.vue"),
-        name: "AuthCode",
+        path: "font",
+        component: () => import("@/pages/basic/font.vue"),
+        name: "font",
         meta: {
-          title: "数据维护",
+          title: "数据维护-汉字",
+          affix: true
+        }
+      },
+      {
+        path: "word",
+        component: () => import("@/pages/basic/word.vue"),
+        name: "word",
+        meta: {
+          title: "数据维护-词语",
+          affix: true
+        }
+      },
+      {
+        path: "section",
+        component: () => import("@/pages/basic/section.vue"),
+        name: "section",
+        meta: {
+          title: "数据维护-段落",
           affix: true
         }
       }

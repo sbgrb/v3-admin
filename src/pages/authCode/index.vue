@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ElMessageBox } from "element-plus"
+import { deleteGenerateApi, getCurrentUserApi } from "@/pages/authCode/api.ts"
 
 const dataForm = reactive({
   userName: "",
@@ -12,16 +13,27 @@ interface UserInfo {
 }
 
 const tableData = reactive([])
-
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
 function getMainList() {
-
+  getCurrentUserApi({ ...dataForm, pageSize: pageSize.value, pageNum: currentPage.value }).then((res) => {
+    if (res.code === 200) {
+      ElMessage.success(res.message)
+      tableData.concat(res.data as [])
+    } else {
+      ElMessage.error(res.message)
+    }
+  })
 }
 
 function searchReset() {
-
+  currentPage.value = 1
+  pageSize.value = 10
+  getMainList()
 }
 
-function handleEdit(row: UserInfo) {
+function handleDetail(row: UserInfo) {
   console.log(row)
 }
 
@@ -30,7 +42,14 @@ function handleDelete(row: UserInfo) {
     "是否删除",
     "Confirm"
   ).then(() => {
-    console.log(row)
+    deleteGenerateApi(row.id).then((res) => {
+      if (res.code === 200) {
+        ElMessage.success(res.message)
+        getMainList()
+      } else {
+        ElMessage.error(res.message)
+      }
+    })
   })
 }
 
@@ -64,14 +83,17 @@ onMounted(() => {
       </el-col>
     </el-row>
   </el-form>
+  <div class="btns">
+    <el-button type="primary" @click="handleDetail({})">
+      生成邀请码
+    </el-button>
+  </div>
   <el-table :data="tableData" style="width: 100%" border>
     <el-table-column prop="date" label="日期" width="180" align="center" />
     <el-table-column prop="name" label="状态" width="180" align="center" />
-    <el-table-column prop="address" label="Address" align="center" />
-    <el-table-column prop="address" label="Address" align="center" />
     <el-table-column prop="address" label="操作" align="center">
       <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.row)">
+        <el-button size="small" @click="handleDetail(scope.row)">
           编辑
         </el-button>
         <el-button size="small" type="danger" @click="handleDelete(scope.row)">
@@ -80,6 +102,15 @@ onMounted(() => {
       </template>
     </el-table-column>
   </el-table>
+  <el-pagination
+    v-model:current-page="currentPage"
+    v-model:page-size="pageSize"
+    :total="total"
+    :page-sizes="[10, 20, 30, 40]"
+    @size-change="getMainList"
+    @current-change="getMainList"
+    background layout="prev, pager, next"
+  />
 </template>
 
 <style scoped lang="scss">

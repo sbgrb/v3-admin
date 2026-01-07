@@ -27,17 +27,17 @@ const loading = ref(false)
 
 /** 登录表单数据 */
 const loginFormData: LoginRequestData = reactive({
-  username: "admin",
+  userName: "admin",
   password: "123456"
 })
 
 /** 登录表单校验规则 */
 const loginFormRules: FormRules = {
-  username: [
+  userName: [
     { required: true, message: "请输入用户名", trigger: "blur" }
   ],
   password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
+    { required: true, message: "请输入密码", trigger: "blur" }
   ]
 }
 
@@ -71,9 +71,9 @@ function handleLogin() {
       </div>
       <div class="content">
         <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules" @keyup.enter="handleLogin">
-          <el-form-item prop="username">
+          <el-form-item prop="userName">
             <el-input
-              v-model.trim="loginFormData.username"
+              v-model.trim="loginFormData.userName"
               placeholder="用户名"
               type="text"
               tabindex="1"

@@ -38,8 +38,8 @@ export default defineConfig(({ mode }) => {
       // 反向代理
       proxy: {
         "/api": {
-          // target: "https://7050aewo1413.vicp.fun",
-          target: "https://apifoxmock.com/m1/2930465-2145633-default/api/v1",
+          target: "https://api.yfry0929.top",
+          // target: "https://apifoxmock.com/m1/2930465-2145633-default/api/v1",
           // 是否为 WebSocket
           ws: false,
           // 是否允许跨域
@@ -70,7 +70,7 @@ export default defineConfig(({ mode }) => {
            */
           manualChunks: {
             vue: ["vue", "vue-router", "pinia"],
-            element: ["element-plus", "@element-plus/icons-vue"],
+            element: ["element-plus", "@element-plus/icons-vue"]
           }
         }
       },

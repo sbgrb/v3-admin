@@ -1,5 +1,4 @@
 import type { AxiosInstance, AxiosRequestConfig } from "axios"
-import { getToken } from "@@/utils/cache/cookies"
 import axios from "axios"
 import { get, merge } from "lodash-es"
 import { useUserStore } from "@/pinia/stores/user"
@@ -100,15 +99,12 @@ function createInstance() {
 /** 创建请求方法 */
 function createRequest(instance: AxiosInstance) {
   return <T>(config: AxiosRequestConfig): Promise<T> => {
-    const token = getToken()
     // 默认配置
     const defaultConfig: AxiosRequestConfig = {
       // 接口地址
       baseURL: import.meta.env.VITE_BASE_URL,
       // 请求头
       headers: {
-        // 携带 Token
-        "Authorization": token ? `Bearer ${token}` : undefined,
         "Content-Type": "application/json"
       },
       // 请求体
@@ -116,7 +112,7 @@ function createRequest(instance: AxiosInstance) {
       // 请求超时
       timeout: 5000,
       // 跨域请求时是否携带 Cookies
-      withCredentials: false
+      withCredentials: true
     }
     // 将默认配置 defaultConfig 和传入的自定义配置 config 进行合并成为 mergeConfig
     const mergeConfig = merge(defaultConfig, config)
