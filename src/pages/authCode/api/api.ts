@@ -8,13 +8,33 @@ interface RequestData {
 
 interface ResponseData {
   code: number
-  data?: []
+  data?: AuthCodeLine[]
   total: number
   message: string
 }
 
+export interface AuthCodeLine {
+  id: number
+  duration: number
+  status: string
+}
+
+export interface authForm {
+  id?: number
+  count: number | undefined
+  duration: number | undefined
+}
+
+export interface addForm {
+  count: number | undefined
+  duration: number | undefined
+  other: number | undefined
+}
+
+export type authParams = Partial<authForm & addForm>
+
 /** 生成邀请码 */
-export function generateApi(params: RequestData): Promise<ResponseData> {
+export function generateApi(params: authForm): Promise<ResponseData> {
   return request({
     url: "/back/registerCode/generate",
     method: "post",
@@ -31,7 +51,7 @@ export function deleteGenerateApi(id: number): Promise<ResponseData> {
 }
 
 /** 分页查询邀请码 */
-export function getCurrentUserApi(params: RequestData): Promise<ResponseData> {
+export function getCurrentCodeApi(params: RequestData): Promise<ResponseData> {
   return request({
     url: "/back/registerCode/list",
     method: "get",

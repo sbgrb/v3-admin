@@ -1,23 +1,25 @@
 <script setup lang="ts">
+import type { authParams } from "@/pages/authCode/api/api.ts"
 import { ElMessageBox } from "element-plus"
-import { deleteGenerateApi, getCurrentUserApi } from "@/pages/authCode/api.ts"
+import { ref } from "vue"
+import { deleteGenerateApi, getCurrentCodeApi } from "@/pages/authCode/api/api.ts"
 
-const dataForm = reactive({
-  userName: "",
-  status: ""
-})
+import Detail from "./components/modal.vue"
 
-interface UserInfo {
-  userName: string
-  id: number
+const dataForm = reactive<authParams>({})
+
+interface BasicType extends HTMLElement {
+  init: () => void
 }
+
+const DetailModal = ref<BasicType | null>(null)
 
 const tableData = reactive([])
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 function getMainList() {
-  getCurrentUserApi({ ...dataForm, pageSize: pageSize.value, pageNum: currentPage.value }).then((res) => {
+  getCurrentCodeApi({ ...dataForm, pageSize: pageSize.value, pageNum: currentPage.value }).then((res) => {
     if (res.code === 200) {
       ElMessage.success(res.message)
       tableData.concat(res.data as [])
@@ -33,16 +35,16 @@ function searchReset() {
   getMainList()
 }
 
-function handleDetail(row: UserInfo) {
+function handleDetail(row: authParams) {
   console.log(row)
 }
 
-function handleDelete(row: UserInfo) {
+function handleDelete(row: authParams) {
   ElMessageBox.confirm(
     "是否删除",
     "Confirm"
   ).then(() => {
-    deleteGenerateApi(row.id).then((res) => {
+    deleteGenerateApi(row.id as number).then((res) => {
       if (res.code === 200) {
         ElMessage.success(res.message)
         getMainList()
@@ -111,6 +113,7 @@ onMounted(() => {
     @current-change="getMainList"
     background layout="prev, pager, next"
   />
+  <Detail ref="DetailModal" @finish="getMainList" />
 </template>
 
 <style scoped lang="scss">

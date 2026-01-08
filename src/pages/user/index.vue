@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ElMessageBox } from "element-plus"
 import { getCurrentUserApi } from "@/pages/user/api"
 
 const dataForm = reactive({
@@ -9,10 +8,10 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
-interface UserInfo {
-  userName: string
-  id: number
-}
+// interface UserInfo {
+//   userName: string
+//   id: number
+// }
 
 const tableData = reactive([])
 
@@ -21,6 +20,7 @@ function getMainList() {
     if (data.code === 200) {
       ElMessage.success(data.message)
       tableData.concat(data.data as [])
+      total.value = data.total
     } else {
       ElMessage.error(data.message)
     }
@@ -28,20 +28,9 @@ function getMainList() {
 }
 
 function searchReset() {
-
-}
-
-function handleEdit(row: UserInfo) {
-  console.log(row)
-}
-
-function handleDelete(row: UserInfo) {
-  ElMessageBox.confirm(
-    "是否删除",
-    "Confirm"
-  ).then(() => {
-    console.log(row)
-  })
+  pageSize.value = 1
+  currentPage.value = 10
+  getMainList()
 }
 
 onMounted(() => {
@@ -74,16 +63,6 @@ onMounted(() => {
     <el-table-column prop="name" label="Name" width="180" align="center" />
     <el-table-column prop="address" label="Address" align="center" />
     <el-table-column prop="address" label="Address" align="center" />
-    <el-table-column prop="address" label="操作" align="center">
-      <template #default="scope">
-        <el-button size="small" @click="handleEdit(scope.row)">
-          编辑
-        </el-button>
-        <el-button size="small" type="danger" @click="handleDelete(scope.row)">
-          删除
-        </el-button>
-      </template>
-    </el-table-column>
   </el-table>
   <el-pagination
     v-model:current-page="currentPage"
