@@ -8,7 +8,6 @@ import SvgComponent from "unplugin-svg-component/vite"
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers"
 import Components from "unplugin-vue-components/vite"
 import { defineConfig, loadEnv } from "vite"
-import { VueMcp } from "vite-plugin-vue-mcp"
 import svgLoader from "vite-svg-loader"
 
 // Configuring Vite: https://cn.vite.dev/config
@@ -39,12 +38,17 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api": {
           target: "https://api.yfry0929.top",
-          // target: "https://apifoxmock.com/m1/2930465-2145633-default/api/v1",
-          // 是否为 WebSocket
-          ws: false,
-          // 是否允许跨域
+          // target: "https://m1.apifoxmock.com/m1/7676158-7418220-default",
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/api/, "")
+          rewrite: path => path.replace(/^\/api/, ""),
+          configure: (proxy, options) => {
+            proxy.on("proxyReq", (p, req) => {
+              console.log("[Proxy]", req.method, "->", options.target as string + req.url as string)
+            })
+            proxy.on("error", (err, req, res) => {
+              console.error("[Proxy error]", req, res, err.message)
+            })
+          }
         }
       },
       // 是否允许跨域
@@ -84,7 +88,7 @@ export default defineConfig(({ mode }) => {
       mode === "development"
         ? undefined
         : {
-            // 打包构建时移除 console.log
+          // 打包构建时移除 console.log
             pure: ["console.log"],
             // 打包构建时移除 debugger
             drop: ["debugger"],
@@ -139,9 +143,7 @@ export default defineConfig(({ mode }) => {
       Components({
         dts: "types/auto/components.d.ts",
         resolvers: [ElementPlusResolver()]
-      }),
-      // 为项目开启 MCP Server
-      VueMcp()
+      })
     ],
     // Configuring Vitest: https://cn.vitest.dev/config
     test: {
