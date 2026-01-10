@@ -7,10 +7,10 @@ const emit = defineEmits(["refresh"])
 const dialogVisible = ref(false)
 
 const reactiveForm = reactive<addForm>({
-  count: undefined,
-  duration: undefined,
-  other: undefined
+  count: 1,
+  duration: -1
 })
+const checkOptionsValue = ref(-1)
 const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules<authForm>>({
   count: [
@@ -46,7 +46,7 @@ const options = [
 
 function submit() {
   ruleFormRef.value?.validate((valid) => {
-    if (reactiveForm.duration === 0 && !reactiveForm.other) {
+    if (checkOptionsValue.value === 0 && !reactiveForm.duration) {
       ElMessage.warning("请输入有效时间")
       return
     }
@@ -68,6 +68,10 @@ function init(row: authParams | null) {
   dialogVisible.value = true
 }
 
+function changeSelect(e: unknown) {
+  reactiveForm.duration = e as number
+}
+
 defineExpose({
   init
 })
@@ -77,7 +81,7 @@ defineExpose({
   <el-dialog
     v-model="dialogVisible"
     title="新增"
-    width="500"
+    width="600"
   >
     <el-form ref="ruleFormRef" :model="reactiveForm" :rules="rules" label-width="100px">
       <el-row>
@@ -88,8 +92,12 @@ defineExpose({
         </el-col>
         <el-col :span="24">
           <el-form-item label="期限" prop="duration">
-            <el-radio-group v-model="reactiveForm.duration" :options="options" :props="props" />
-            <el-input-number v-if="reactiveForm.duration === 0" v-model="reactiveForm.other" :min="1" />
+            <el-radio-group v-model="checkOptionsValue" @change="changeSelect" :options="options" :props="props" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="24" v-if="checkOptionsValue === 0">
+          <el-form-item label="其他" prop="other">
+            <el-input-number v-model="reactiveForm.duration" :min="1" />
           </el-form-item>
         </el-col>
       </el-row>

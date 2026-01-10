@@ -28,10 +28,19 @@ export interface authForm {
 export interface addForm {
   count: number | undefined
   duration: number | undefined
-  other: number | undefined
+}
+
+export interface authCodeLine {
+  id?: string
+  code: string
+  duration: string
+  status: string
+  useMemberPhone: string
+  useTime: string
 }
 
 export type authParams = Partial<authForm & addForm>
+export type authCodeParams = Partial<authCodeLine>
 
 /** 生成邀请码 */
 export function generateApi(params: authForm): Promise<ResponseData> {

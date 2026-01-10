@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from "element-plus"
-import type { BasicResponse, FontParams, WordForm } from "@/pages/basic/api/type.ts"
-import { createWordDataApi } from "@/pages/basic/api"
+import type { BasicResponse, FontParams, WordForm, WordParams } from "@/pages/basic/api/type.ts"
+import { createWordDataApi, updateWordTableDataApi } from "@/pages/basic/api"
 
 const emit = defineEmits(["refresh"])
 const dialogVisible = ref(false)
-const reactiveForm = reactive<WordForm>({
+const reactiveForm = reactive<WordParams>({
   kana: "",
   kanji: "",
   wallerDefinition: ""
@@ -26,12 +26,14 @@ const rules = reactive<FormRules<WordForm>>({
 async function submit() {
   ruleFormRef.value?.validate(async (valid) => {
     if (valid) {
-      createWordDataApi(reactiveForm).then((data: BasicResponse) => {
+      const requestApi = reactiveForm.id ? updateWordTableDataApi : createWordDataApi
+      requestApi(reactiveForm as WordForm).then((data: BasicResponse) => {
         if (data.code === 200) {
-          ElMessage.success(data.message)
+          ElMessage.success(data.msg)
+          dialogVisible.value = false
           emit("refresh")
         } else {
-          ElMessage.error(data.message)
+          ElMessage.error(data.msg)
         }
       })
     }

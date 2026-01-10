@@ -4,7 +4,7 @@ import { request } from "@/http/axios"
 /** 登录并返回 Token */
 export function loginApi(data: Auth.LoginRequestData) {
   return request<Auth.LoginResponseData>({
-    url: "/back/member/login",
+    url: "/back/admin/login",
     method: "POST",
     data
   })

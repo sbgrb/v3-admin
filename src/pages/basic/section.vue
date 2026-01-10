@@ -1,38 +1,68 @@
 <script setup lang="ts">
-import type { FontParams } from "@/pages/basic/api/type.ts"
+import type { SectionForm, SectionParams } from "@/pages/basic/api/type.ts"
 import { ElMessageBox } from "element-plus"
 import { ref } from "vue"
-import AddFont from "./components/addFont.vue"
+import { deleteSectionTableDataApi, getSectionTableDataApi } from "@/pages/basic/api"
+import AddSection from "./components/addSection.vue"
 
 const dataForm = reactive({
   kanji: ""
 })
 
 interface BasicType extends HTMLElement {
-  init: () => void
+  init: (row: SectionParams) => void
 }
 
 const detailModal = ref<BasicType | null>(null)
 
-const tableData = reactive([])
+const pageTotal = ref<number>(0)
+const pageNum = ref<number>(1)
+const pageSize = ref<number>(10)
+const tableData = ref([])
 
 function getMainList() {
-
+  const params = {
+    ...dataForm,
+    pageSize: pageSize.value,
+    pageNum: pageNum.value
+  }
+  getSectionTableDataApi(params).then((data) => {
+    if (data.code === 200) {
+      const { records, total } = data.data
+      tableData.value = records as []
+      pageTotal.value = total
+    } else {
+      ElMessage.error(data.msg)
+    }
+  })
 }
 
 function searchReset() {
-
+  pageNum.value = 1
+  pageSize.value = 10
+  getMainList()
 }
-function addForm(row: FontParams) {
+function addForm(row: SectionParams) {
   detailModal.value!.init(row)
 }
 
-function handleDelete(row: FormData) {
+function handleDelete(row: SectionForm) {
   ElMessageBox.confirm(
-    "是否删除",
-    "Confirm"
+    "确认删除?",
+    "Warning",
+    {
+      confirmButtonText: "确认",
+      cancelButtonText: "取消",
+      type: "warning"
+    }
   ).then(() => {
-    console.log(row)
+    deleteSectionTableDataApi(row.id).then((data) => {
+      if (data.code === 200) {
+        ElMessage.success(data.msg)
+      } else {
+        ElMessage.error(data.msg)
+      }
+    })
   })
 }
 
@@ -67,7 +97,7 @@ onMounted(() => {
     </el-button>
   </div>
   <el-table :data="tableData" style="width: 100%" border>
-    <el-table-column type="index"></el-table-column>
+    <el-table-column type="index" />
     <el-table-column prop="假名" label="Date" width="180" align="center" />
     <el-table-column prop="汉字" label="Name" width="180" align="center" />
     <el-table-column prop="定义" label="Address" align="center" />
@@ -82,7 +112,18 @@ onMounted(() => {
       </template>
     </el-table-column>
   </el-table>
-  <AddFont ref="detailModal" @refer-list="getMainList" />
+  <div class="pagination">
+    <el-pagination
+      v-model:current-page="pageNum"
+      v-model:page-size="pageSize"
+      :total="pageTotal"
+      :page-sizes="[10, 20, 30, 40]"
+      @size-change="getMainList"
+      @current-change="getMainList"
+      background layout="prev, pager, next"
+    />
+  </div>
+  <AddSection ref="detailModal" @refer-list="getMainList" />
 </template>
 
 <style scoped lang="scss">

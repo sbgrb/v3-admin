@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from "element-plus"
-import type { BasicResponse, FontForm, FontParams } from "@/pages/basic/api/type.ts"
-import { createFontDataApi } from "@/pages/basic/api"
+import type { BasicResponse, FontForm, FontParams, OptionalKey } from "@/pages/basic/api/type.ts"
+import { createFontDataApi, updateTableDataApi } from "@/pages/basic/api"
 
 const emit = defineEmits(["refresh"])
 const dialogVisible = ref(false)
-const reactiveForm = reactive<FontForm>({
+const reactiveForm = reactive<OptionalKey<FontForm, "id">>({
   kanjiChar: "",
   onyomi: "",
   kunyomi: "",
@@ -38,12 +38,14 @@ const rules = reactive<FormRules<FontForm>>({
 async function submit() {
   ruleFormRef.value?.validate(async (valid) => {
     if (valid) {
-      createFontDataApi(reactiveForm).then((data: BasicResponse) => {
+      const requestApi = reactiveForm.id != null ? updateTableDataApi : createFontDataApi
+      requestApi(reactiveForm as FontForm).then((data: BasicResponse) => {
         if (data.code === 200) {
-          ElMessage.success(data.message)
+          ElMessage.success(data.msg)
+          dialogVisible.value = false
           emit("refresh")
         } else {
-          ElMessage.error(data.message)
+          ElMessage.error(data.msg)
         }
       })
     }
@@ -64,9 +66,9 @@ defineExpose({
   <el-dialog
     v-model="dialogVisible"
     title="新增"
-    width="500"
+    width="600"
   >
-    <el-form ref="ruleFormRef" :model="reactiveForm" :rules="rules" label-width="100px">
+    <el-form ref="ruleFormRef" :model="reactiveForm" :rules="rules" label-width="140px">
       <el-row>
         <el-col :span="24">
           <el-form-item label="汉字" prop="kanjiChar">

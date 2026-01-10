@@ -8,29 +8,19 @@ import { useUserStore } from "@/pinia/stores/user"
 import { loginApi } from "./apis"
 import Owl from "./components/Owl.vue"
 import { useFocus } from "./composables/useFocus"
-
 const route = useRoute()
-
 const router = useRouter()
-
-const userStore = useUserStore()
-
 const settingsStore = useSettingsStore()
-
 const { isFocus, handleBlur, handleFocus } = useFocus()
-
 /** 登录表单元素的引用 */
 const loginFormRef = useTemplateRef("loginFormRef")
-
 /** 登录按钮 Loading */
 const loading = ref(false)
-
 /** 登录表单数据 */
 const loginFormData: LoginRequestData = reactive({
   userName: "admin",
   password: "123456"
 })
-
 /** 登录表单校验规则 */
 const loginFormRules: FormRules = {
   userName: [
@@ -49,8 +39,7 @@ function handleLogin() {
       return
     }
     loading.value = true
-    loginApi(loginFormData).then(({ data }) => {
-      userStore.setToken(data.token)
+    loginApi(loginFormData).then(() => {
       router.push(route.query.redirect ? decodeURIComponent(route.query.redirect as string) : "/")
     }).catch(() => {
       loginFormData.password = ""

@@ -1,11 +1,27 @@
+export interface BasicListResponse<T> {
+  code: number
+  msg: string
+  data: {
+    current: number
+    pages: number
+    records: T[]
+    size: number
+    total: number
+  }
+}
+
 export interface BasicResponse {
   code: number
-  message: string
-  data?: unknown
+  msg: string
+}
+
+export interface BaseRequest {
+  pageNum: number
+  pageSize: number
 }
 
 export interface FontForm {
-  id?: number
+  id: number
   kanjiChar: string
   onyomi: string
   kunyomi: string
@@ -15,11 +31,19 @@ export interface FontForm {
 }
 
 export interface WordForm {
-  id?: number
+  id: number
+  jmdictSeq: string
+  categoryId: number
   kana: string
   kanji: string
   wallerDefinition: string
 }
 
+export interface SectionForm {
+  id: number
+}
+
 export type FontParams = Partial<FontForm>
 export type WordParams = Partial<WordForm>
+export type SectionParams = Partial<SectionForm>
+export type OptionalKey<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
