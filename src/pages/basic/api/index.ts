@@ -1,8 +1,7 @@
 import type * as Basic from "./type.ts"
-import {FontForm, SectionForm, WordForm} from "./type.ts";
+import type { FontForm, SectionForm, WordForm } from "./type.ts"
 import { request } from "@/http/axios.ts"
 // 汉字
-/** 增 */
 export function createFontDataApi(data: Basic.FontForm): Promise<Basic.BasicResponse> {
   return request({
     url: "/back/kanji/add",
@@ -10,7 +9,6 @@ export function createFontDataApi(data: Basic.FontForm): Promise<Basic.BasicResp
     data
   })
 }
-/** 改 */
 export function updateTableDataApi(data: Basic.FontForm): Promise<Basic.BasicResponse> {
   return request({
     url: "/back/kanji/update",
@@ -19,7 +17,6 @@ export function updateTableDataApi(data: Basic.FontForm): Promise<Basic.BasicRes
   })
 }
 
-/** 删 */
 export function deleteTableDataApi(id: number): Promise<Basic.BasicResponse> {
   return request({
     url: `/back/kanji/delete/${id}`,
@@ -27,7 +24,6 @@ export function deleteTableDataApi(id: number): Promise<Basic.BasicResponse> {
   })
 }
 
-/** 查 */
 export function getFontTableDataApi(params: Basic.BaseRequest): Promise<Basic.BasicListResponse<FontForm>> {
   return request({
     url: "/back/kanji/list",
@@ -35,7 +31,7 @@ export function getFontTableDataApi(params: Basic.BaseRequest): Promise<Basic.Ba
     params
   })
 }
-
+//  词语
 export function createWordDataApi(data: Basic.WordForm): Promise<Basic.BasicResponse> {
   return request({
     url: "/back/vocab/add",
@@ -43,7 +39,6 @@ export function createWordDataApi(data: Basic.WordForm): Promise<Basic.BasicResp
     data
   })
 }
-/** 改 */
 export function updateWordTableDataApi(data: Basic.WordForm): Promise<Basic.BasicResponse> {
   return request({
     url: "/back/vocab/update",
@@ -52,7 +47,6 @@ export function updateWordTableDataApi(data: Basic.WordForm): Promise<Basic.Basi
   })
 }
 
-/** 删 */
 export function deleteWordTableDataApi(id: number): Promise<Basic.BasicResponse> {
   return request({
     url: `/back/vocab/delete/${id}`,
@@ -60,7 +54,6 @@ export function deleteWordTableDataApi(id: number): Promise<Basic.BasicResponse>
   })
 }
 
-/** 查 */
 export function getWordTableDataApi(params: Basic.BaseRequest): Promise<Basic.BasicListResponse<WordForm>> {
   return request({
     url: "/back/vocab/list",
@@ -68,7 +61,7 @@ export function getWordTableDataApi(params: Basic.BaseRequest): Promise<Basic.Ba
     params
   })
 }
-
+//  段落
 export function createSectionDataApi(data: Basic.WordForm): Promise<Basic.BasicResponse> {
   return request({
     url: "/back/vocab/add",
@@ -76,7 +69,6 @@ export function createSectionDataApi(data: Basic.WordForm): Promise<Basic.BasicR
     data
   })
 }
-/** 改 */
 export function updateSectionTableDataApi(data: Basic.WordForm): Promise<Basic.BasicResponse> {
   return request({
     url: "/back/vocab/update",
@@ -85,7 +77,6 @@ export function updateSectionTableDataApi(data: Basic.WordForm): Promise<Basic.B
   })
 }
 
-/** 删 */
 export function deleteSectionTableDataApi(id: number): Promise<Basic.BasicResponse> {
   return request({
     url: `/back/vocab/delete/${id}`,
@@ -93,11 +84,41 @@ export function deleteSectionTableDataApi(id: number): Promise<Basic.BasicRespon
   })
 }
 
-/** 查 */
 export function getSectionTableDataApi(params: Basic.BaseRequest): Promise<Basic.BasicListResponse<SectionForm>> {
   return request({
     url: "/back/vocab/list",
     method: "get",
     params
+  })
+}
+
+// 配置
+export function getConfigTableDataApi<T>(url: string, params: Basic.BaseRequest): Promise<Basic.BasicListResponse<T>> {
+  return request({
+    url,
+    method: "get",
+    params
+  })
+}
+
+export function updateConfigTableDataApi(url: string, data: Basic.WordForm): Promise<Basic.BasicResponse> {
+  return request({
+    url,
+    method: "post",
+    data
+  })
+}
+
+export function deleteConfigTableDataApi(url: string, id: number): Promise<Basic.BasicResponse> {
+  return request({
+    url: `${url}/${id}`,
+    method: "post"
+  })
+}
+
+export function detailConfigTableDataApi(url: string, id: number): Promise<Basic.BasicResponse> {
+  return request({
+    url: `${url}/${id}`,
+    method: "get"
   })
 }

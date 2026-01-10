@@ -43,11 +43,11 @@ export type authParams = Partial<authForm & addForm>
 export type authCodeParams = Partial<authCodeLine>
 
 /** 生成邀请码 */
-export function generateApi(params: authForm): Promise<ResponseData> {
+export function generateApi(data: authForm): Promise<ResponseData> {
   return request({
     url: "/back/registerCode/generate",
     method: "post",
-    params
+    data
   })
 }
 

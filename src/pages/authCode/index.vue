@@ -9,7 +9,7 @@ import Detail from "./components/modal.vue"
 const dataForm = reactive<authCodeParams>({})
 
 interface BasicType extends HTMLElement {
-  init: () => void
+  init: (row: authCodeParams) => void
 }
 const DetailModal = ref<BasicType | null>(null)
 const tableData = reactive<authCodeLine[]>([])
@@ -32,7 +32,7 @@ function searchReset() {
   getMainList()
 }
 
-function handleDetail(row: authParams) {
+function handleDetail(row: authCodeParams) {
   DetailModal.value!.init(row)
 }
 

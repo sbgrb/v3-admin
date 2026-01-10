@@ -115,6 +115,15 @@ export const constantRoutes: RouteRecordRaw[] = [
           title: "数据维护-段落",
           affix: true
         }
+      },
+      {
+        path: "config",
+        component: () => import("@/pages/basic/config.vue"),
+        name: "section",
+        meta: {
+          title: "分类管理",
+          affix: true
+        }
       }
     ]
   }
