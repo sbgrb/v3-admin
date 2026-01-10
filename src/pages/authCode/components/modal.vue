@@ -54,6 +54,7 @@ function submit() {
       generateApi(reactiveForm).then((data) => {
         if (data.code === 200) {
           ElMessage.success(data.message)
+          dialogVisible.value = false
           emit("refresh")
         } else {
           ElMessage.error(data.message)

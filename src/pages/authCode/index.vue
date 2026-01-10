@@ -96,12 +96,12 @@ onMounted(() => {
     </el-button>
   </div>
   <el-table :data="tableData" style="width: 100%" border>
-    <el-table-column prop="code" label="邀请码" width="180" align="center" />
+    <el-table-column prop="code" label="邀请码"  align="center" />
     <el-table-column prop="duration" label="有效期（天）" width="180" align="center" />
     <el-table-column prop="status" label="状态" width="180" align="center" />
     <el-table-column prop="useMemberPhone" label="使用用户" width="180" align="center" />
     <el-table-column prop="useTime" label="使用时间" width="180" align="center" />
-    <el-table-column prop="address" label="操作" align="center">
+    <el-table-column prop="address" label="操作" align="center" width="200">
       <template #default="scope">
         <el-button size="small" @click="handleDetail(scope.row)">
           编辑

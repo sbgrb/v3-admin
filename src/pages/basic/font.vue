@@ -2,7 +2,7 @@
 import type { FontForm, FontParams } from "@/pages/basic/api/type.ts"
 import { ElMessageBox } from "element-plus"
 import { ref } from "vue"
-import { deleteTableDataApi, getFontTableDataApi } from "@/pages/basic/api"
+import { deleteTableDataApi, getFontTableDataApi, getOptions } from "@/pages/basic/api"
 import AddFont from "./components/addFont.vue"
 
 interface BasicType extends HTMLElement {
@@ -10,13 +10,26 @@ interface BasicType extends HTMLElement {
 }
 
 const dataForm = reactive({
-  kanjiChar: ""
+  kanjiChar: "",
+  categoryId: ""
 })
+const route = useRoute()
 const pageTotal = ref<number>(0)
 const pageNum = ref<number>(1)
 const pageSize = ref<number>(10)
 const detailModal = ref<BasicType | null>(null)
 const tableData = ref([])
+const options = ref([])
+
+function getSelectOptions() {
+  getOptions("/back/kanjiCategory/listAll").then((data) => {
+    if (data.code === 200) {
+      options.value = data.data as []
+    } else {
+      ElMessage.error(data.msg)
+    }
+  })
+}
 function getMainList() {
   const params = {
     ...dataForm,
@@ -67,8 +80,16 @@ function handleDelete(row: FontForm) {
   })
 }
 
+onBeforeMount(() => {
+  getSelectOptions()
+})
 onMounted(() => {
   getMainList()
+})
+watchEffect(() => {
+  if (route.query.categoryId) {
+    dataForm.categoryId = route.query.categoryId as string
+  }
 })
 </script>
 
@@ -78,6 +99,13 @@ onMounted(() => {
       <el-col :span="6">
         <el-form-item label="汉字">
           <el-input v-model="dataForm.kanjiChar" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="分类">
+          <el-select v-model="dataForm.categoryId">
+            <el-option v-for="item in options" :key="item.id" :value="item.id" :label="item.name" />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="6">
@@ -131,7 +159,6 @@ onMounted(() => {
     />
   </div>
   <AddFont ref="detailModal" @refer-list="getMainList" />
-
 </template>
 
 <style scoped lang="scss">

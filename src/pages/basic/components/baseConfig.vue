@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { detailConfigTableDataApi, getConfigTableDataApi } from "@/pages/basic/api"
+import { getConfigTableDataApi } from "@/pages/basic/api"
 
+const props = defineProps(["name", "urls"])
+const router = useRouter()
 interface queryFrom {
   categoryName?: string
   keyword?: string
 }
 
-const props = defineProps(["currIndex", "urls"])
 const dataForm = reactive<queryFrom>({
   categoryName: "",
   keyword: ""
@@ -44,11 +45,7 @@ function handleDelete(id: number) {
   console.log(props.urls, id)
 }
 function showDetail(id: number) {
-  const requestUrl = props.urls.detail
-  if (!requestUrl) return
-  detailConfigTableDataApi(requestUrl, id).then((res) => {
-    console.log(res)
-  })
+  router.push(`/basic/${props.name}?categoryId=${id}`)
 }
 </script>
 

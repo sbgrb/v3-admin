@@ -122,3 +122,18 @@ export function detailConfigTableDataApi(url: string, id: number): Promise<Basic
     method: "get"
   })
 }
+
+interface Option { id: number, name: string }
+
+interface Options {
+  code: number
+  msg: string
+  data: Option[]
+}
+
+export function getOptions(url: string): Promise<Options> {
+  return request({
+    url,
+    method: "get"
+  })
+}

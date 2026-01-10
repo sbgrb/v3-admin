@@ -18,3 +18,11 @@ initGreyAndColorWeakness()
     <router-view />
   </el-config-provider>
 </template>
+
+<style>
+.pagination {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

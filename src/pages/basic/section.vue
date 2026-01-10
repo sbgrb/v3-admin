@@ -97,7 +97,7 @@ onMounted(() => {
     </el-button>
   </div>
   <el-table :data="tableData" style="width: 100%" border>
-    <el-table-column type="index" />
+    <el-table-column type="index" align="center" width="80" />
     <el-table-column prop="假名" label="Date" width="180" align="center" />
     <el-table-column prop="汉字" label="Name" width="180" align="center" />
     <el-table-column prop="定义" label="Address" align="center" />

@@ -119,7 +119,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       {
         path: "config",
         component: () => import("@/pages/basic/config.vue"),
-        name: "section",
+        name: "config",
         meta: {
           title: "分类管理",
           affix: true

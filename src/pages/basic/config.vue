@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseConfig from "@/pages/basic/components/baseConfig.vue"
 
-const activeName = ref("1")
+const activeName = ref("font")
 const FontConfig = {
   list: "/back/kanjiCategory/list",
   add: "/back/kanjiCategory/add",
@@ -32,14 +32,14 @@ const SelectConfig = {
     type="card"
     class="demo-tabs"
   >
-    <el-tab-pane label="汉字" name="1">
-      <BaseConfig :curr-index="activeName" :urls="FontConfig" />
+    <el-tab-pane label="汉字" name="font">
+      <BaseConfig :name="activeName" :urls="FontConfig" />
     </el-tab-pane>
-    <el-tab-pane label="词汇" name="2">
-      <BaseConfig :curr-index="activeName" :urls="WordConfig" />
+    <el-tab-pane label="词汇" name="word">
+      <BaseConfig :name="activeName" :urls="WordConfig" />
     </el-tab-pane>
-    <el-tab-pane label="段落" name="3">
-      <BaseConfig :curr-index="activeName" :urls="SelectConfig" />
+    <el-tab-pane label="段落" name="section">
+      <BaseConfig :name="activeName" :urls="SelectConfig" />
     </el-tab-pane>
   </el-tabs>
 </template>

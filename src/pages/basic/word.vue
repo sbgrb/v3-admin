@@ -2,22 +2,24 @@
 import type { WordForm, WordParams } from "@/pages/basic/api/type.ts"
 import { ElMessageBox } from "element-plus"
 import { ref } from "vue"
-import { deleteWordTableDataApi, getWordTableDataApi } from "@/pages/basic/api"
+import { deleteWordTableDataApi, getOptions, getWordTableDataApi } from "@/pages/basic/api"
 import AddWord from "./components/addWord.vue"
 
 const dataForm = reactive({
-  keyword: ""
+  keyword: "",
+  categoryId: ""
 })
 
 interface BasicType extends HTMLElement {
   init: (row: WordParams) => void
 }
-
+const route = useRoute()
 const detailModal = ref<BasicType | null>(null)
 const pageTotal = ref<number>(0)
 const pageNum = ref<number>(1)
 const pageSize = ref<number>(10)
 const tableData = ref([])
+const options = ref([])
 
 function getMainList() {
   const params = {
@@ -30,6 +32,16 @@ function getMainList() {
       const { records, total } = data.data
       tableData.value = records as []
       pageTotal.value = total
+    } else {
+      ElMessage.error(data.msg)
+    }
+  })
+}
+
+function getSelectOptions() {
+  getOptions("/back/vocabCategory/listAll").then((data) => {
+    if (data.code === 200) {
+      options.value = data.data
     } else {
       ElMessage.error(data.msg)
     }
@@ -64,9 +76,16 @@ function handleDelete(row: WordForm) {
     })
   })
 }
-
+onBeforeMount(() => {
+  getSelectOptions()
+})
 onMounted(() => {
   getMainList()
+})
+watchEffect(() => {
+  if (route.query.categoryId) {
+    dataForm.categoryId = route.query.categoryId as string
+  }
 })
 </script>
 
@@ -76,6 +95,13 @@ onMounted(() => {
       <el-col :span="6">
         <el-form-item label="关键字">
           <el-input v-model="dataForm.keyword" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="分类">
+          <el-select v-model="dataForm.categoryId">
+            <el-option v-for="item in options" :key="item.id" :value="item.id" :label="item.name" />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="6">
@@ -96,7 +122,7 @@ onMounted(() => {
     </el-button>
   </div>
   <el-table :data="tableData" style="width: 100%" border>
-    <el-table-column type="index" />
+    <el-table-column type="index" align="center" width="80" />
     <el-table-column prop="jmdictSeq" label="词典编号" width="180" align="center" />
     <el-table-column prop="kana" label="假名" width="180" align="center" />
     <el-table-column prop="kanji" label="汉字" align="center" />
@@ -129,5 +155,10 @@ onMounted(() => {
 <style scoped lang="scss">
 .btns {
   margin: 8px 0;
+}
+.pagination {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

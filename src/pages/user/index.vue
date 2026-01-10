@@ -54,10 +54,8 @@ onMounted(() => {
     </el-row>
   </el-form>
   <el-table :data="tableData" style="width: 100%" border>
-    <el-table-column prop="date" label="Date" width="180" align="center" />
-    <el-table-column prop="name" label="Name" width="180" align="center" />
-    <el-table-column prop="address" label="Address" align="center" />
-    <el-table-column prop="address" label="Address" align="center" />
+    <el-table-column prop="phone" label="手机号" align="center" />
+    <el-table-column prop="name" label="到期时间" align="center" />
   </el-table>
   <div class="pagination">
     <el-pagination
@@ -73,9 +71,5 @@ onMounted(() => {
 </template>
 
 <style scoped lang="scss">
-.pagination {
-  margin-top: 8px;
-  display: flex;
-  justify-content: flex-end;
-}
+
 </style>
