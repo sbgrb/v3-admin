@@ -8,7 +8,7 @@ const emit = defineEmits(["refresh"])
 const dialogVisible = ref(false)
 const urls = inject("urls") as Record<string, { add: string, edit: string }>
 const name = inject("name") as Ref<string>
-const urlsConfig = urls[name.value]
+const urlsConfig = computed(() => urls[name.value])
 const reactiveForm = reactive<configForm>({
   sort: 0,
   name: ""
@@ -26,7 +26,7 @@ const rules = reactive({
 async function submit() {
   ruleFormRef.value?.validate(async (valid) => {
     if (valid) {
-      const url = reactiveForm.id ? urlsConfig.edit : urlsConfig.add
+      const url = reactiveForm.id ? urlsConfig.value.edit : urlsConfig.value.add
       updateConfigTableDataApi(url, reactiveForm).then((data) => {
         if (data.code === 200) {
           ElMessage.success(data.msg)
