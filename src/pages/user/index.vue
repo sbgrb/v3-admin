@@ -9,15 +9,15 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 
-const tableData = reactive([])
+const tableData = ref([])
 
 function getMainList() {
   getCurrentUserApi({ ...dataForm, pageSize: pageSize.value, pageNum: currentPage.value }).then((data) => {
     if (data.code === 200) {
-      tableData.concat(data.data as [])
-      total.value = data.total
+      tableData.value = data.data.records as []
+      total.value = data.data.total
     } else {
-      ElMessage.error(data.message)
+      ElMessage.error(data.msg)
     }
   })
 }
@@ -55,7 +55,7 @@ onMounted(() => {
   </el-form>
   <el-table :data="tableData" style="width: 100%" border>
     <el-table-column prop="phone" label="手机号" align="center" />
-    <el-table-column prop="name" label="到期时间" align="center" />
+    <el-table-column prop="expirationTime" label="到期时间" align="center" />
   </el-table>
   <div class="pagination">
     <el-pagination

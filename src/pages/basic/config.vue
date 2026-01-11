@@ -2,7 +2,7 @@
 import BaseConfig from "@/pages/basic/components/baseConfig.vue"
 
 const activeName = ref("font")
-const FontConfig = {
+const font = {
   list: "/back/kanjiCategory/list",
   add: "/back/kanjiCategory/add",
   del: "/back/kanjiCategory/delete",
@@ -10,7 +10,7 @@ const FontConfig = {
   detail: "/back/kanjiCategory"
 }
 
-const WordConfig = {
+const word = {
   list: "/back/vocabCategory/list",
   add: "/back/vocabCategory/add",
   del: "/back/vocabCategory/delete",
@@ -18,11 +18,14 @@ const WordConfig = {
   detail: "/back/vocabCategory"
 }
 
+provide("urls", { font, word })
+provide("name", activeName)
+
 const SelectConfig = {
-  list: "",
-  add: "",
-  del: "",
-  edit: ""
+  list: "/back/articleCategory/list",
+  add: "/back/articleCategory/add",
+  del: "/back/articleCategory/delete",
+  edit: "/back/articleCategory/update"
 }
 </script>
 
@@ -33,10 +36,10 @@ const SelectConfig = {
     class="demo-tabs"
   >
     <el-tab-pane label="汉字" name="font">
-      <BaseConfig :name="activeName" :urls="FontConfig" />
+      <BaseConfig :name="activeName" :urls="font" />
     </el-tab-pane>
     <el-tab-pane label="词汇" name="word">
-      <BaseConfig :name="activeName" :urls="WordConfig" />
+      <BaseConfig :name="activeName" :urls="word" />
     </el-tab-pane>
     <el-tab-pane label="段落" name="section">
       <BaseConfig :name="activeName" :urls="SelectConfig" />

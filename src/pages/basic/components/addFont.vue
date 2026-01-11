@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from "element-plus"
-import type { BasicResponse, FontForm, FontParams, OptionalKey } from "@/pages/basic/api/type.ts"
+import type { BasicResponse, FontForm, FontParams, Option, OptionalKey } from "@/pages/basic/api/type.ts"
 import { createFontDataApi, updateTableDataApi } from "@/pages/basic/api"
 
 const emit = defineEmits(["refresh"])
@@ -11,8 +11,10 @@ const reactiveForm = reactive<OptionalKey<FontForm, "id">>({
   kunyomi: "",
   displayMeanings: "",
   fullDisplayMeanings: "",
-  meanings: ""
+  meanings: "",
+  categoryId: 1
 })
+const options = inject("fontOptions") as Option[]
 const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules<FontForm>>({
   kanjiChar: [
@@ -32,6 +34,9 @@ const rules = reactive<FormRules<FontForm>>({
   ],
   meanings: [
     { required: true, message: "请输入", trigger: "blur" }
+  ],
+  categoryId: [
+    { required: true, message: "请输入", trigger: "change" }
   ]
 })
 
@@ -98,6 +103,13 @@ defineExpose({
         <el-col :span="24">
           <el-form-item label="含义" prop="meanings">
             <el-input v-model="reactiveForm.meanings" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="分类" prop="categoryId">
+            <el-select v-model="reactiveForm.categoryId" placeholder="请选择">
+              <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>

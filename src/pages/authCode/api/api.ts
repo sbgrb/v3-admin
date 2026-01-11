@@ -13,10 +13,25 @@ interface ResponseData {
   message: string
 }
 
+export interface ResponseListData<T> {
+  code: number
+  msg: string
+  data: {
+    current: number
+    pages: number
+    records: T[]
+    size: number
+    total: number
+  }
+}
+
 export interface AuthCodeLine {
-  id: number
+  code: string
   duration: number
-  status: string
+  id: number
+  status: number
+  useMemberPhone: string
+  useTime: string
 }
 
 export interface authForm {
@@ -60,7 +75,7 @@ export function deleteGenerateApi(id: number): Promise<ResponseData> {
 }
 
 /** 分页查询邀请码 */
-export function getCurrentCodeApi(params: RequestData): Promise<ResponseData> {
+export function getCurrentCodeApi(params: RequestData): Promise<ResponseListData<AuthCodeLine>> {
   return request({
     url: "/back/registerCode/list",
     method: "get",

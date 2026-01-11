@@ -62,16 +62,16 @@ export function getWordTableDataApi(params: Basic.BaseRequest): Promise<Basic.Ba
   })
 }
 //  段落
-export function createSectionDataApi(data: Basic.WordForm): Promise<Basic.BasicResponse> {
+export function createSectionDataApi(data: Basic.SectionForm): Promise<Basic.BasicResponse> {
   return request({
-    url: "/back/vocab/add",
+    url: "/back/article/add",
     method: "post",
     data
   })
 }
-export function updateSectionTableDataApi(data: Basic.WordForm): Promise<Basic.BasicResponse> {
+export function updateSectionTableDataApi(data: Basic.SectionForm): Promise<Basic.BasicResponse> {
   return request({
-    url: "/back/vocab/update",
+    url: "/back/article/update",
     method: "post",
     data
   })
@@ -79,14 +79,14 @@ export function updateSectionTableDataApi(data: Basic.WordForm): Promise<Basic.B
 
 export function deleteSectionTableDataApi(id: number): Promise<Basic.BasicResponse> {
   return request({
-    url: `/back/vocab/delete/${id}`,
+    url: `/back/article/delete/${id}`,
     method: "post"
   })
 }
 
 export function getSectionTableDataApi(params: Basic.BaseRequest): Promise<Basic.BasicListResponse<SectionForm>> {
   return request({
-    url: "/back/vocab/list",
+    url: "/back/article/list",
     method: "get",
     params
   })
@@ -101,7 +101,7 @@ export function getConfigTableDataApi<T>(url: string, params: Basic.BaseRequest)
   })
 }
 
-export function updateConfigTableDataApi(url: string, data: Basic.WordForm): Promise<Basic.BasicResponse> {
+export function updateConfigTableDataApi(url: string, data: Basic.configForm): Promise<Basic.BasicResponse> {
   return request({
     url,
     method: "post",
@@ -123,12 +123,10 @@ export function detailConfigTableDataApi(url: string, id: number): Promise<Basic
   })
 }
 
-interface Option { id: number, name: string }
-
 interface Options {
   code: number
   msg: string
-  data: Option[]
+  data: Basic.Option[]
 }
 
 export function getOptions(url: string): Promise<Options> {

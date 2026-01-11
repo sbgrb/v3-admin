@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { WordForm, WordParams } from "@/pages/basic/api/type.ts"
+import type { Option, WordForm, WordParams } from "@/pages/basic/api/type.ts"
 import { ElMessageBox } from "element-plus"
 import { ref } from "vue"
 import { deleteWordTableDataApi, getOptions, getWordTableDataApi } from "@/pages/basic/api"
@@ -7,7 +7,7 @@ import AddWord from "./components/addWord.vue"
 
 const dataForm = reactive({
   keyword: "",
-  categoryId: ""
+  categoryId: undefined as number | undefined
 })
 
 interface BasicType extends HTMLElement {
@@ -19,8 +19,8 @@ const pageTotal = ref<number>(0)
 const pageNum = ref<number>(1)
 const pageSize = ref<number>(10)
 const tableData = ref([])
-const options = ref([])
-
+const options = ref<Option[]>([])
+provide("wordOptions", options)
 function getMainList() {
   const params = {
     ...dataForm,
@@ -41,7 +41,7 @@ function getMainList() {
 function getSelectOptions() {
   getOptions("/back/vocabCategory/listAll").then((data) => {
     if (data.code === 200) {
-      options.value = data.data
+      options.value = data.data as Option[]
     } else {
       ElMessage.error(data.msg)
     }
@@ -51,6 +51,8 @@ function getSelectOptions() {
 function searchReset() {
   pageNum.value = 1
   pageSize.value = 10
+  dataForm.keyword = ""
+  dataForm.categoryId = undefined
   getMainList()
 }
 function addForm(row: WordParams) {
@@ -84,7 +86,7 @@ onMounted(() => {
 })
 watchEffect(() => {
   if (route.query.categoryId) {
-    dataForm.categoryId = route.query.categoryId as string
+    dataForm.categoryId = Number(route.query.categoryId)
   }
 })
 </script>
@@ -149,7 +151,7 @@ watchEffect(() => {
       background layout="prev, pager, next"
     />
   </div>
-  <AddWord ref="detailModal" @refer-list="getMainList" />
+  <AddWord ref="detailModal" @refresh="getMainList" />
 </template>
 
 <style scoped lang="scss">

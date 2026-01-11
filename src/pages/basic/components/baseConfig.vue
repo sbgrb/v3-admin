@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { getConfigTableDataApi } from "@/pages/basic/api"
+import type { configForm } from "@/pages/basic/api/type.ts"
+import { ElMessageBox } from "element-plus"
+import { ref } from "vue"
+import { deleteConfigTableDataApi, getConfigTableDataApi } from "@/pages/basic/api"
+import AddConfig from "./addConfig.vue"
 
 const props = defineProps(["name", "urls"])
 const router = useRouter()
@@ -7,7 +11,10 @@ interface queryFrom {
   categoryName?: string
   keyword?: string
 }
-
+interface ConfigModal extends HTMLElement {
+  init: (row: configForm) => void
+}
+const addConfigModal = ref<ConfigModal | null>(null)
 const dataForm = reactive<queryFrom>({
   categoryName: "",
   keyword: ""
@@ -35,18 +42,42 @@ function getMainList() {
 }
 
 function searchReset() {
-
+  pageNum.value = 1
+  pageSize.value = 10
+  dataForm.categoryName = ""
+  dataForm.keyword = ""
+  getMainList()
 }
 
-function addForm(row: unknown) {
-  console.log(row)
+function addForm(row: configForm = { sort: 0, name: "" }) {
+  addConfigModal.value?.init(row)
 }
 function handleDelete(id: number) {
-  console.log(props.urls, id)
+  ElMessageBox.confirm(
+    "确认删除?",
+    "Warning",
+    {
+      confirmButtonText: "确认",
+      cancelButtonText: "取消",
+      type: "warning"
+    }
+  ).then(() => {
+    deleteConfigTableDataApi(props.urls.del, id).then((res) => {
+      if (res.code === 200) {
+        ElMessage.success(res.msg)
+        getMainList()
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  })
 }
 function showDetail(id: number) {
   router.push(`/basic/${props.name}?categoryId=${id}`)
 }
+onMounted(async () => {
+  getMainList()
+})
 </script>
 
 <template>
@@ -69,6 +100,11 @@ function showDetail(id: number) {
       </el-col>
     </el-row>
   </el-form>
+  <div class="tabs" style="margin: 8px 0">
+    <el-button @click="addForm()" type="primary">
+      新增
+    </el-button>
+  </div>
   <el-table :data="tableData" style="width: 100%" border>
     <el-table-column type="index" align="center" width="80" />
     <el-table-column prop="sort" label="排序" align="center" />
@@ -98,6 +134,7 @@ function showDetail(id: number) {
       background layout="prev, pager, next"
     />
   </div>
+  <AddConfig ref="addConfigModal" @refresh="getMainList" />
 </template>
 
 <style scoped lang="scss">

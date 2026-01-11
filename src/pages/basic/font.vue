@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FontForm, FontParams } from "@/pages/basic/api/type.ts"
+import type { FontForm, FontParams, Option } from "@/pages/basic/api/type.ts"
 import { ElMessageBox } from "element-plus"
 import { ref } from "vue"
 import { deleteTableDataApi, getFontTableDataApi, getOptions } from "@/pages/basic/api"
@@ -11,20 +11,21 @@ interface BasicType extends HTMLElement {
 
 const dataForm = reactive({
   kanjiChar: "",
-  categoryId: ""
+  categoryId: undefined as number | undefined
 })
 const route = useRoute()
+
 const pageTotal = ref<number>(0)
 const pageNum = ref<number>(1)
 const pageSize = ref<number>(10)
 const detailModal = ref<BasicType | null>(null)
 const tableData = ref([])
-const options = ref([])
-
+const options = ref<Option[]>([])
+provide("fontOptions", options)
 function getSelectOptions() {
   getOptions("/back/kanjiCategory/listAll").then((data) => {
     if (data.code === 200) {
-      options.value = data.data as []
+      options.value = data.data as Option[]
     } else {
       ElMessage.error(data.msg)
     }
@@ -53,6 +54,8 @@ function upload() {
 function searchReset() {
   pageNum.value = 1
   pageSize.value = 10
+  dataForm.categoryId = undefined
+  dataForm.kanjiChar = ""
   getMainList()
 }
 
@@ -88,7 +91,7 @@ onMounted(() => {
 })
 watchEffect(() => {
   if (route.query.categoryId) {
-    dataForm.categoryId = route.query.categoryId as string
+    dataForm.categoryId = Number(route.query.categoryId)
   }
 })
 </script>
@@ -103,7 +106,7 @@ watchEffect(() => {
       </el-col>
       <el-col :span="6">
         <el-form-item label="分类">
-          <el-select v-model="dataForm.categoryId">
+          <el-select v-model="dataForm.categoryId" placeholder="请选择分类">
             <el-option v-for="item in options" :key="item.id" :value="item.id" :label="item.name" />
           </el-select>
         </el-form-item>
@@ -129,7 +132,7 @@ watchEffect(() => {
     </el-button>
   </div>
   <el-table :data="tableData" style="width: 100%" border>
-    <el-table-column type="index" />
+    <el-table-column type="index" align="center" />
     <el-table-column label="汉字" prop="kanjiChar" width="120" align="center" />
     <el-table-column label="音读" prop="onyomi" width="120" align="center" />
     <el-table-column label="训读" prop="kunyomi" width="120" align="center" />
@@ -158,7 +161,7 @@ watchEffect(() => {
       background layout="prev, pager, next"
     />
   </div>
-  <AddFont ref="detailModal" @refer-list="getMainList" />
+  <AddFont ref="detailModal" @refresh="getMainList" />
 </template>
 
 <style scoped lang="scss">

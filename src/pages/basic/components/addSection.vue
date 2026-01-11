@@ -1,37 +1,40 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from "element-plus"
-import type { BasicResponse, FontForm, FontParams } from "@/pages/basic/api/type.ts"
-import { createFontDataApi } from "@/pages/basic/api"
+import type { FontParams, Option, SectionForm, SectionParams } from "@/pages/basic/api/type.ts"
+import { ref } from "vue"
+import { createSectionDataApi, updateSectionTableDataApi } from "@/pages/basic/api"
 
 const emit = defineEmits(["refresh"])
 const dialogVisible = ref(false)
-const reactiveForm = reactive<FontForm>({
+const reactiveForm = reactive<SectionParams>({
   kana: "",
-  kanji: "",
-  wallerDefinition: ""
+  translate: "",
+  categoryId: 1
 })
 const ruleFormRef = ref<FormInstance>()
-const rules = reactive<FormRules<FontForm>>({
+const rules = reactive<FormRules<SectionForm>>({
   kana: [
     { required: true, message: "请输入", trigger: "blur" }
   ],
-  kanji: [
+  translate: [
     { required: true, message: "请输入", trigger: "blur" }
   ],
-  wallerDefinition: [
-    { required: true, message: "请输入", trigger: "blur" }
+  categoryId: [
+    { required: true, message: "请输入", trigger: "change" }
   ]
 })
-
+const options = inject("sectionOptions") as Option[]
 async function submit() {
   ruleFormRef.value?.validate(async (valid) => {
     if (valid) {
-      createFontDataApi(reactiveForm).then((data: BasicResponse) => {
+      const requestApi = reactiveForm.id ? updateSectionTableDataApi : createSectionDataApi
+      requestApi(reactiveForm as SectionForm).then((data) => {
         if (data.code === 200) {
-          ElMessage.success(data.message)
+          ElMessage.success(data.msg)
+          dialogVisible.value = false
           emit("refresh")
         } else {
-          ElMessage.error(data.message)
+          ElMessage.error(data.msg)
         }
       })
     }
@@ -57,18 +60,20 @@ defineExpose({
     <el-form ref="ruleFormRef" :model="reactiveForm" :rules="rules" label-width="100px">
       <el-row>
         <el-col :span="24">
-          <el-form-item label="假名" prop="kana">
+          <el-form-item label="日语" prop="kana">
             <el-input v-model="reactiveForm.kana" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="汉字" prop="kanji">
-            <el-input v-model="reactiveForm.kanji" />
+          <el-form-item label="翻译" prop="translate">
+            <el-input v-model="reactiveForm.translate" />
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="定义" prop="wallerDefinition" :rules="[]">
-            <el-input v-model="reactiveForm.wallerDefinition" />
+          <el-form-item label="分类" prop="categoryId">
+            <el-select v-model="reactiveForm.categoryId" placeholder="请选择">
+              <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
