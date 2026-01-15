@@ -135,3 +135,22 @@ export function getOptions(url: string): Promise<Options> {
     method: "get"
   })
 }
+
+export function exportDataApi(url: string): Promise<Blob> {
+  return request({
+    url,
+    method: "get",
+    responseType: "blob"
+  })
+}
+
+export function importDataApi(url: string, data: FormData): Promise<Basic.BasicResponse> {
+  return request({
+    url,
+    method: "post",
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
+}

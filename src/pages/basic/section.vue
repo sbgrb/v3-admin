@@ -2,7 +2,13 @@
 import type { Option, SectionForm, SectionParams } from "@/pages/basic/api/type.ts"
 import { ElMessageBox } from "element-plus"
 import { ref } from "vue"
-import { deleteSectionTableDataApi, getOptions, getSectionTableDataApi } from "@/pages/basic/api"
+import {
+  deleteSectionTableDataApi,
+  exportDataApi,
+  getOptions,
+  getSectionTableDataApi,
+  importDataApi
+} from "@/pages/basic/api"
 import AddSection from "./components/addSection.vue"
 
 const dataForm = reactive({
@@ -78,6 +84,38 @@ function handleDelete(row: SectionForm) {
     })
   })
 }
+
+function exportData() {
+  exportDataApi("/back/article/downloadTemplate").then((blob) => {
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = "段落导入模板.xlsx"
+    a.click()
+  })
+}
+
+function uploadFileLoad(rawFile: File): boolean {
+  const validMimeTypes = [
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  ]
+  if (!validMimeTypes.includes(rawFile.type)) {
+    ElMessage.error("请上传Excel文件!")
+    return false
+  }
+
+  const formData = new FormData()
+  formData.append("file", rawFile)
+  importDataApi("/back/article/import", formData).then((data) => {
+    if (data.code === 200) {
+      ElMessage.success(data.msg)
+      getMainList()
+    } else {
+      ElMessage.error(data.msg)
+    }
+  })
+  return false
+}
 onBeforeMount(() => {
   getSelectOptions()
 })
@@ -123,6 +161,18 @@ watchEffect(() => {
     <el-button type="primary" @click="addForm(null)">
       新增
     </el-button>
+    <el-button type="primary" @click="exportData">
+      导出
+    </el-button>
+    <el-upload
+      style="margin-left: 12px"
+      :before-upload="uploadFileLoad"
+      :show-file-list="false"
+    >
+      <el-button type="primary">
+        文件上传
+      </el-button>
+    </el-upload>
   </div>
   <el-table :data="tableData" style="width: 100%" border>
     <el-table-column type="index" align="center" width="80" />
@@ -157,5 +207,7 @@ watchEffect(() => {
 <style scoped lang="scss">
 .btns {
   margin: 8px 0;
+  display: flex;
+  align-items: center;
 }
 </style>

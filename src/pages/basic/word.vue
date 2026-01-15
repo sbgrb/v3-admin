@@ -2,7 +2,7 @@
 import type { Option, WordForm, WordParams } from "@/pages/basic/api/type.ts"
 import { ElMessageBox } from "element-plus"
 import { ref } from "vue"
-import { deleteWordTableDataApi, getOptions, getWordTableDataApi } from "@/pages/basic/api"
+import { deleteWordTableDataApi, exportDataApi, getOptions, getWordTableDataApi, importDataApi } from "@/pages/basic/api"
 import AddWord from "./components/addWord.vue"
 
 const dataForm = reactive({
@@ -13,6 +13,7 @@ const dataForm = reactive({
 interface BasicType extends HTMLElement {
   init: (row: WordParams | null) => void
 }
+
 const route = useRoute()
 const detailModal = ref<BasicType | null>(null)
 const pageTotal = ref<number>(0)
@@ -21,6 +22,7 @@ const pageSize = ref<number>(10)
 const tableData = ref([])
 const options = ref<Option[]>([])
 provide("wordOptions", options)
+
 function getMainList() {
   const params = {
     ...dataForm,
@@ -55,6 +57,7 @@ function searchReset() {
   dataForm.categoryId = undefined
   getMainList()
 }
+
 function addForm(row: WordParams | null) {
   detailModal.value!.init(row)
 }
@@ -72,12 +75,46 @@ function handleDelete(row: WordForm) {
     deleteWordTableDataApi(row.id).then((data) => {
       if (data.code === 200) {
         ElMessage.success(data.msg)
+        getMainList()
       } else {
         ElMessage.error(data.msg)
       }
     })
   })
 }
+
+function exportData() {
+  exportDataApi("/back/vocab/downloadTemplate").then((blob) => {
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(blob)
+    a.download = "词语导入模板.xlsx"
+    a.click()
+  })
+}
+
+function uploadFileLoad(rawFile: File): boolean {
+  const validMimeTypes = [
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  ]
+  if (!validMimeTypes.includes(rawFile.type)) {
+    ElMessage.error("请上传Excel文件!")
+    return false
+  }
+
+  const formData = new FormData()
+  formData.append("file", rawFile)
+  importDataApi("/back/vocab/import", formData).then((data) => {
+    if (data.code === 200) {
+      ElMessage.success(data.msg)
+      getMainList()
+    } else {
+      ElMessage.error(data.msg)
+    }
+  })
+  return false
+}
+
 onBeforeMount(() => {
   getSelectOptions()
 })
@@ -122,6 +159,18 @@ watchEffect(() => {
     <el-button type="primary" @click="addForm(null)">
       新增
     </el-button>
+    <el-button type="primary" @click="exportData">
+      导出
+    </el-button>
+    <el-upload
+      style="margin-left: 12px"
+      :before-upload="uploadFileLoad"
+      :show-file-list="false"
+    >
+      <el-button type="primary">
+        文件上传
+      </el-button>
+    </el-upload>
   </div>
   <el-table :data="tableData" style="width: 100%" border>
     <el-table-column type="index" align="center" width="80" />
@@ -157,7 +206,10 @@ watchEffect(() => {
 <style scoped lang="scss">
 .btns {
   margin: 8px 0;
+  display: flex;
+  align-items: center;
 }
+
 .pagination {
   margin-top: 8px;
   display: flex;
