@@ -40,8 +40,15 @@ async function submit() {
   })
 }
 
-function init(row: configForm) {
-  Object.assign(reactiveForm, row)
+function init(row: configForm | null) {
+  if (row) {
+    Object.assign(reactiveForm, row)
+  } else {
+    Object.assign(reactiveForm, {
+      sort: 0,
+      name: ""
+    })
+  }
   dialogVisible.value = true
 }
 

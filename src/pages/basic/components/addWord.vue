@@ -46,8 +46,18 @@ async function submit() {
   })
 }
 
-function init(row: FontParams) {
-  Object.assign(reactiveForm, row)
+function init(row: FontParams | null) {
+  if (row) {
+    Object.assign(reactiveForm, row)
+  } else {
+    Object.assign(reactiveForm, {
+      kana: "",
+      kanji: "",
+      wallerDefinition: "",
+      categoryId: 1,
+      id: null
+    })
+  }
   dialogVisible.value = true
 }
 

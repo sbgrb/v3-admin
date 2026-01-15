@@ -11,7 +11,7 @@ const dataForm = reactive({
 })
 
 interface BasicType extends HTMLElement {
-  init: (row: WordParams) => void
+  init: (row: WordParams | null) => void
 }
 const route = useRoute()
 const detailModal = ref<BasicType | null>(null)
@@ -55,7 +55,7 @@ function searchReset() {
   dataForm.categoryId = undefined
   getMainList()
 }
-function addForm(row: WordParams) {
+function addForm(row: WordParams | null) {
   detailModal.value!.init(row)
 }
 
@@ -119,7 +119,7 @@ watchEffect(() => {
     </el-row>
   </el-form>
   <div class="btns">
-    <el-button type="primary" @click="addForm({})">
+    <el-button type="primary" @click="addForm(null)">
       新增
     </el-button>
   </div>

@@ -6,7 +6,7 @@ import { deleteTableDataApi, getFontTableDataApi, getOptions } from "@/pages/bas
 import AddFont from "./components/addFont.vue"
 
 interface BasicType extends HTMLElement {
-  init: (row: FontParams) => void
+  init: (row: FontParams | null) => void
 }
 
 const dataForm = reactive({
@@ -59,7 +59,7 @@ function searchReset() {
   getMainList()
 }
 
-function addForm(row: FontParams) {
+function addForm(row: FontParams | null) {
   detailModal.value!.init(row)
 }
 
@@ -124,7 +124,7 @@ watchEffect(() => {
     </el-row>
   </el-form>
   <div class="btns">
-    <el-button type="primary" @click="addForm({})">
+    <el-button type="primary" @click="addForm(null)">
       新增
     </el-button>
     <el-button type="primary" @click="upload">

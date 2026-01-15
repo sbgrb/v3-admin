@@ -24,6 +24,7 @@ const rules = reactive<FormRules<SectionForm>>({
   ]
 })
 const options = inject("sectionOptions") as Option[]
+
 async function submit() {
   ruleFormRef.value?.validate(async (valid) => {
     if (valid) {
@@ -41,8 +42,17 @@ async function submit() {
   })
 }
 
-function init(row: FontParams) {
-  Object.assign(reactiveForm, row)
+function init(row: FontParams | null) {
+  if (row) {
+    Object.assign(reactiveForm, row)
+  } else {
+    Object.assign(reactiveForm, {
+      kana: "",
+      translate: "",
+      categoryId: 1,
+      id: null
+    })
+  }
   dialogVisible.value = true
 }
 

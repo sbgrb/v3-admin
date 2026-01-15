@@ -57,8 +57,21 @@ async function submit() {
   })
 }
 
-function init(row: FontParams) {
-  Object.assign(reactiveForm, row)
+function init(row: FontParams | null) {
+  if (row) {
+    Object.assign(reactiveForm, row)
+  } else {
+    Object.assign(reactiveForm, {
+      kanjiChar: "",
+      onyomi: "",
+      kunyomi: "",
+      displayMeanings: "",
+      fullDisplayMeanings: "",
+      meanings: "",
+      categoryId: 1,
+      id: null
+    })
+  }
   dialogVisible.value = true
 }
 

@@ -37,7 +37,8 @@ export default defineConfig(({ mode }) => {
       // 反向代理
       proxy: {
         "/api": {
-          target: "https://api.yfry0929.top",
+          // target: "https://api.yfry0929.top",
+          target: "http://sakura.mrmao.life",
           // target: "https://m1.apifoxmock.com/m1/7676158-7418220-default",
           changeOrigin: true,
           rewrite: path => path.replace(/^\/api/, ""),
