@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatDateTime } from "@@/utils/datetime.ts"
 import { reactive, ref } from "vue"
 import { getCurrentUserApi } from "@/pages/user/api"
 
@@ -55,7 +56,11 @@ onMounted(() => {
   </el-form>
   <el-table :data="tableData" style="width: 100%" border>
     <el-table-column prop="phone" label="手机号" align="center" />
-    <el-table-column prop="expirationTime" label="到期时间" align="center" />
+    <el-table-column prop="expirationTime" label="到期时间" align="center">
+      <template #default="scope">
+        {{ scope.row.expirationTime ? formatDateTime(scope.row.expirationTime) : "" }}
+      </template>
+    </el-table-column>
   </el-table>
   <div class="pagination">
     <el-pagination

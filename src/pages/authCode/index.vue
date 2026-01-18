@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { authCodeLine, authCodeParams, authParams } from "@/pages/authCode/api/api.ts"
+import { formatDateTime } from "@@/utils/datetime.ts"
 import { ElMessageBox } from "element-plus"
 import { reactive, ref } from "vue"
-import { deleteGenerateApi, getCurrentCodeApi } from "@/pages/authCode/api/api.ts"
 
+import { deleteGenerateApi, getCurrentCodeApi } from "@/pages/authCode/api/api.ts"
 import Detail from "./components/modal.vue"
 
 const dataForm = reactive<authCodeParams>({})
@@ -103,9 +104,17 @@ onMounted(() => {
         {{ scope.row.duration === -1 ? '永久' : `${scope.row.duration}` }}
       </template>
     </el-table-column>
-    <el-table-column prop="status" label="状态" width="180" align="center" />
+    <el-table-column prop="status" label="状态" width="180" align="center">
+      <template #default="scope">
+        {{ scope.row.status === 0 ? '未使用' : '已使用' }}
+      </template>
+    </el-table-column>
     <el-table-column prop="useMemberPhone" label="使用用户" width="180" align="center" />
-    <el-table-column prop="useTime" label="使用时间" width="180" align="center" />
+    <el-table-column prop="useTime" label="使用时间" width="180" align="center">
+      <template #default="scope">
+        {{ scope.row.useTime ? formatDateTime(scope.row.useTime) : "" }}
+      </template>
+    </el-table-column>
     <el-table-column prop="address" label="操作" align="center" width="160">
       <template #default="scope">
         <el-button size="small" type="danger" @click="handleDelete(scope.row)">
